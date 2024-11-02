@@ -1,0 +1,91 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/validate": {
+            "get": {
+                "description": "Valida diferentes tipos de dados, como email, CPF, nome e telefone",
+                "tags": [
+                    "Validation"
+                ],
+                "summary": "Valida o formato dos dados fornecidos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email a ser validado",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "CPF a ser validado",
+                        "name": "cpf",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nome a ser validado",
+                        "name": "nome",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telefone a ser validado",
+                        "name": "telefone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ValidationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ValidationResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ValidationResponse": {
+            "type": "object",
+            "properties": {
+                "execution_time_ms": {
+                    "type": "integer"
+                },
+                "is_valid": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "parameter_key": {
+                    "type": "string"
+                },
+                "parameter_value": {
+                    "type": "string"
+                },
+                "raw_parameter_value": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,58 @@
+definitions:
+  models.ValidationResponse:
+    properties:
+      execution_time_ms:
+        type: integer
+      is_valid:
+        type: boolean
+      message:
+        type: string
+      parameter_key:
+        type: string
+      parameter_value:
+        type: string
+      raw_parameter_value:
+        type: string
+      request_id:
+        type: string
+      status_code:
+        type: integer
+      timestamp:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /validate:
+    get:
+      description: Valida diferentes tipos de dados, como email, CPF, nome e telefone
+      parameters:
+      - description: Email a ser validado
+        in: query
+        name: email
+        type: string
+      - description: CPF a ser validado
+        in: query
+        name: cpf
+        type: string
+      - description: Nome a ser validado
+        in: query
+        name: nome
+        type: string
+      - description: Telefone a ser validado
+        in: query
+        name: telefone
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ValidationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ValidationResponse'
+      summary: Valida o formato dos dados fornecidos
+      tags:
+      - Validation
+swagger: "2.0"
