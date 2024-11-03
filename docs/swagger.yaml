@@ -25,23 +25,36 @@ info:
 paths:
   /validate:
     get:
-      description: Valida diferentes tipos de dados, como email, CPF, nome e telefone
+      description: Validates different types of data, including email, CPF, name,
+        phone, RG, CEP, and credit card number
       parameters:
-      - description: Email a ser validado
+      - description: Email to be validated
         in: query
         name: email
         type: string
-      - description: CPF a ser validado
+      - description: CPF to be validated
         in: query
         name: cpf
         type: string
-      - description: Nome a ser validado
+      - description: Name to be validated
         in: query
         name: nome
         type: string
-      - description: Telefone a ser validado
+      - description: Phone number to be validated
         in: query
         name: telefone
+        type: string
+      - description: Credit card number to be validated
+        in: query
+        name: plastic
+        type: string
+      - description: RG to be validated
+        in: query
+        name: rg
+        type: string
+      - description: CEP (postal code) to be validated
+        in: query
+        name: cep
         type: string
       responses:
         "200":
@@ -52,7 +65,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.ValidationResponse'
-      summary: Valida o formato dos dados fornecidos
+      summary: Validates provided data format
       tags:
       - Validation
 swagger: "2.0"

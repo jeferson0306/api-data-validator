@@ -17,34 +17,52 @@ const docTemplate = `{
     "paths": {
         "/validate": {
             "get": {
-                "description": "Valida diferentes tipos de dados, como email, CPF, nome e telefone",
+                "description": "Validates different types of data, including email, CPF, name, phone, RG, CEP, and credit card number",
                 "tags": [
                     "Validation"
                 ],
-                "summary": "Valida o formato dos dados fornecidos",
+                "summary": "Validates provided data format",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Email a ser validado",
+                        "description": "Email to be validated",
                         "name": "email",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "CPF a ser validado",
+                        "description": "CPF to be validated",
                         "name": "cpf",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Nome a ser validado",
+                        "description": "Name to be validated",
                         "name": "nome",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Telefone a ser validado",
+                        "description": "Phone number to be validated",
                         "name": "telefone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Credit card number to be validated",
+                        "name": "plastic",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RG to be validated",
+                        "name": "rg",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "CEP (postal code) to be validated",
+                        "name": "cep",
                         "in": "query"
                     }
                 ],
