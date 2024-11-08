@@ -3,8 +3,13 @@ definitions:
     properties:
       execution_time_ms:
         type: integer
+      from_cache:
+        type: boolean
       is_valid:
         type: boolean
+      location_data:
+        additionalProperties: true
+        type: object
       message:
         type: string
       parameter_key:
@@ -38,11 +43,11 @@ paths:
         type: string
       - description: Name to be validated
         in: query
-        name: nome
+        name: name
         type: string
       - description: Phone number to be validated
         in: query
-        name: telefone
+        name: telephone
         type: string
       - description: Credit card number to be validated
         in: query

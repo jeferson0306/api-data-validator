@@ -38,13 +38,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Name to be validated",
-                        "name": "nome",
+                        "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "Phone number to be validated",
-                        "name": "telefone",
+                        "name": "telephone",
                         "in": "query"
                     },
                     {
@@ -90,8 +90,15 @@ const docTemplate = `{
                 "execution_time_ms": {
                     "type": "integer"
                 },
+                "from_cache": {
+                    "type": "boolean"
+                },
                 "is_valid": {
                     "type": "boolean"
+                },
+                "location_data": {
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "message": {
                     "type": "string"

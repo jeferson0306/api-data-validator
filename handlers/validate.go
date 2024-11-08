@@ -15,8 +15,8 @@ import (
 // @Tags Validation
 // @Param email query string false "Email to be validated"
 // @Param cpf query string false "CPF to be validated"
-// @Param nome query string false "Name to be validated"
-// @Param telefone query string false "Phone number to be validated"
+// @Param name query string false "Name to be validated"
+// @Param telephone query string false "Phone number to be validated"
 // @Param plastic query string false "Credit card number to be validated"
 // @Param rg query string false "RG to be validated"
 // @Param cep query string false "CEP (postal code) to be validated"
@@ -29,25 +29,25 @@ func ValidateHandler(w http.ResponseWriter, r *http.Request) {
 
 	if email := r.URL.Query().Get("email"); email != "" {
 		isValid, sanitizedValue, message := utils.ValidateEmail(email)
-		response = createResponse("email", email, sanitizedValue, isValid, message, start)
+		response = createResponse("email", email, sanitizedValue, isValid, message, start, false)
 	} else if cpf := r.URL.Query().Get("cpf"); cpf != "" {
-		isValid, sanitizedValue, message := utils.ValidateCPF(cpf)
-		response = createResponse("cpf", cpf, sanitizedValue, isValid, message, start)
-	} else if nome := r.URL.Query().Get("nome"); nome != "" {
-		isValid, sanitizedValue, message := utils.ValidateName(nome)
-		response = createResponse("nome", nome, sanitizedValue, isValid, message, start)
-	} else if telefone := r.URL.Query().Get("telefone"); telefone != "" {
-		isValid, sanitizedValue, message := utils.ValidatePhone(telefone)
-		response = createResponse("telefone", telefone, sanitizedValue, isValid, message, start)
+		isValid, sanitizedValue, message, fromCache := utils.ValidateCPFWithCache(cpf)
+		response = createResponse("cpf", cpf, sanitizedValue, isValid, message, start, fromCache)
+	} else if name := r.URL.Query().Get("name"); name != "" {
+		isValid, sanitizedValue, message := utils.ValidateName(name)
+		response = createResponse("name", name, sanitizedValue, isValid, message, start, false)
+	} else if telephone := r.URL.Query().Get("telephone"); telephone != "" {
+		isValid, sanitizedValue, message := utils.ValidatePhone(telephone)
+		response = createResponse("telephone", telephone, sanitizedValue, isValid, message, start, false)
 	} else if plastic := r.URL.Query().Get("plastic"); plastic != "" {
 		isValid, sanitizedValue, message := utils.ValidatePlastic(plastic)
-		response = createResponse("plastic", plastic, sanitizedValue, isValid, message, start)
+		response = createResponse("plastic", plastic, sanitizedValue, isValid, message, start, false)
 	} else if rg := r.URL.Query().Get("rg"); rg != "" {
 		isValid, sanitizedValue, message := utils.ValidateRG(rg)
-		response = createResponse("rg", rg, sanitizedValue, isValid, message, start)
+		response = createResponse("rg", rg, sanitizedValue, isValid, message, start, false)
 	} else if cep := r.URL.Query().Get("cep"); cep != "" {
 		isValid, sanitizedValue, message := utils.ValidateCEP(cep)
-		response = createResponse("cep", cep, sanitizedValue, isValid, message, start)
+		response = createResponse("cep", cep, sanitizedValue, isValid, message, start, false)
 	} else {
 		response = models.ValidationResponse{
 			StatusCode: http.StatusBadRequest,
@@ -61,7 +61,8 @@ func ValidateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func createResponse(key, rawValue, sanitizedValue string, isValid bool, message string, start time.Time) models.ValidationResponse {
+// createResponse creates a response with the provided data.
+func createResponse(key, rawValue, sanitizedValue string, isValid bool, message string, start time.Time, fromCache bool) models.ValidationResponse {
 	return models.ValidationResponse{
 		StatusCode:        http.StatusOK,
 		ParameterKey:      key,
@@ -72,5 +73,6 @@ func createResponse(key, rawValue, sanitizedValue string, isValid bool, message 
 		RequestID:         uuid.New().String(),
 		Timestamp:         time.Now(),
 		ExecutionTimeMs:   int(time.Since(start).Milliseconds()),
+		FromCache:         fromCache,
 	}
 }

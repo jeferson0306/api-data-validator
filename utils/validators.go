@@ -1,21 +1,49 @@
 package utils
 
 import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 )
 
-// ValidateEmail validates if the email format is correct
-func ValidateEmail(email string) (bool, string, string) {
-	re := regexp.MustCompile(`^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`)
-	if re.MatchString(email) {
-		return true, email, "Valid email format"
+var ctx = context.Background()
+
+// Initialize Redis client
+var rdb = redis.NewClient(&redis.Options{
+	Addr: "localhost:6379",
+})
+
+// ValidateCPFWithCache validates the CPF and uses cache to avoid duplicate validations.
+func ValidateCPFWithCache(cpf string) (bool, string, string, bool) {
+	cachedResult, err := rdb.Get(ctx, cpf).Result()
+	if err == nil {
+		isValid := cachedResult == "true"
+		message := "Valid CPF format"
+		if !isValid {
+			message = "Invalid CPF format"
+		}
+		return isValid, cpf, message, true
 	}
-	return false, email, "Invalid email format"
+
+	isValid, sanitizedCPF, message := ValidateCPF(cpf)
+
+	cacheValue := "false"
+	if isValid {
+		cacheValue = "true"
+	}
+	err = rdb.Set(ctx, cpf, cacheValue, 24*time.Hour).Err()
+	if err != nil {
+		fmt.Println("Error saving to cache:", err)
+	}
+
+	return isValid, sanitizedCPF, message, false
 }
 
-// ValidateCPF validates if the CPF number format is correct
+// ValidateCPF checks the format of a CPF number.
 func ValidateCPF(cpf string) (bool, string, string) {
 	re := regexp.MustCompile(`\D`)
 	sanitizedCPF := re.ReplaceAllString(cpf, "")
@@ -25,7 +53,7 @@ func ValidateCPF(cpf string) (bool, string, string) {
 	return true, sanitizedCPF, "Valid CPF format"
 }
 
-// isValidCPF checks if a CPF number is valid according to CPF rules
+// isValidCPF validates a CPF number according to CPF rules.
 func isValidCPF(cpf string) bool {
 	if cpf == "00000000000" || cpf == "11111111111" ||
 		cpf == "22222222222" || cpf == "33333333333" ||
@@ -50,6 +78,15 @@ func isValidCPF(cpf string) bool {
 		}
 	}
 	return true
+}
+
+// ValidateEmail validates if the email format is correct
+func ValidateEmail(email string) (bool, string, string) {
+	re := regexp.MustCompile(`^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`)
+	if re.MatchString(email) {
+		return true, email, "Valid email format"
+	}
+	return false, email, "Invalid email format"
 }
 
 // ValidateRG validates the format of a Brazilian RG (Registro Geral).
